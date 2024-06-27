@@ -1,30 +1,61 @@
-# React + TypeScript + Vite
+# ToDo List App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a simple ToDo list application built with Vite.js, Tailwind CSS, React.js, TypeScript, localStorage for persistence, Google Fonts for typography, and Font Awesome for icons.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Add ToDo**: You can add new tasks to your list.
+- **Delete ToDo**: Remove tasks from the list.
+- **Clear All Todos**: Remove all tasks from the list at once.
+- **LocalStorage**: Persists ToDo list in the browser's localStorage, ensuring data is retained on page refresh.
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Vite.js**: Fast, opinionated web dev build tool that serves your code via native ES modules.
+- **React.js**: JavaScript library for building user interfaces.
+- **TypeScript**: Typed superset of JavaScript that compiles to plain JavaScript.
+- **Tailwind CSS**: Utility-first CSS framework for quickly building custom designs.
+- **localStorage**: Web API that provides persistent storage key-value pairs in a web browser.
+- **Google Fonts**: Provides a wide selection of fonts that can be easily embedded into web pages.
+- **Font Awesome**: Icon toolkit that provides a comprehensive set of icons.
 
-- Configure the top-level `parserOptions` property like this:
+## Getting Started
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+Make sure you have Node.js and npm (or yarn) installed on your machine.
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/todo-list-app.git
+   ```
+
+2. Navigate into the project directory:
+
+```bash
+  cd todo-list-app
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+3. Install dependencies:
+
+```bash
+  npm install
+```
+
+4. To run the application locally:
+
+```bash
+  npm run dev
+```
+
+## Usage
+
+- **Adding Todos**: Enter a task in the input field and press Enter or click the Add button.
+- **Deleting Todos**: Click on the delete icon next to the task you want to remove.
+- **Clearing All Todos**: Click on the "Clear All" button to remove all tasks from the list.
+- **Persistence**: Your todos are automatically saved to localStorage, so they will persist even after refreshing the page.
