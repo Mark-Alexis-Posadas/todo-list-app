@@ -1,12 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-interface TodoItemType {
-  item: string;
-  index: number;
-  handleEdit: (index: number) => void;
-  handleDelete: (index: number) => void;
-  isEditing: boolean;
-}
+import { TodoItemType } from "../types/TodoItem";
 export default function TodoItem({
   item,
   index,

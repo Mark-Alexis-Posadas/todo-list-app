@@ -1,18 +1,13 @@
 import { useState, useEffect, ChangeEvent, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import {
   faCheckCircle,
   faExclamation,
   faPlusCircle,
-  faXmarkCircle,
+  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import TodoItem from "./components/TodoItem";
-
-interface Todo {
-  index: number | null;
-  text: string;
-}
+import { TodoType } from "./types/Todo";
 
 export default function Todo() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -37,7 +32,7 @@ export default function Todo() {
     name: "",
   });
 
-  const [currentTodo, setCurrentTodo] = useState<Todo>({
+  const [currentTodo, setCurrentTodo] = useState<TodoType>({
     index: null,
     text: "",
   });
@@ -58,14 +53,13 @@ export default function Todo() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     todos.includes(e.target.value) ? setExists(true) : setExists(false);
-
     setInputVal(e.target.value);
   };
 
   const handleAddTodo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputVal.trim() === "") {
-      setAlertText("Please add todo...");
+      setAlertText("Please add a todo...");
       setAlert(true);
       setAlertColor(false);
       inputRef.current?.focus();
@@ -95,8 +89,7 @@ export default function Todo() {
         isShow: false,
       }));
       setAlert(true);
-
-      setAlertText(`${deleteTodo.name} has been Deleted`);
+      setAlertText(`${deleteTodo.name} has been deleted`);
       setAlertColor(true);
     }
 
@@ -126,18 +119,14 @@ export default function Todo() {
       currentTodo.index !== null &&
       currentTodo.text !== todos[currentTodo.index]
     ) {
-      console.log(currentTodo.text, todos[currentTodo.index]);
-
-      setAlert(true);
-      setAlertText("Todo has been updated");
-      setAlertColor(true);
-    }
-
-    if (currentTodo.index !== null) {
       const updatedTodos: string[] = todos.map((todo, idx) =>
         idx === currentTodo.index ? currentTodo.text : todo
       );
       setTodos(updatedTodos);
+
+      setAlert(true);
+      setAlertText("Todo has been updated");
+      setAlertColor(true);
     }
 
     setModalEdit(false);
@@ -152,17 +141,20 @@ export default function Todo() {
     setTodos([]);
     setConfirm(false);
     const res =
-      todos.length > 1 ? "All todos has been deleted!" : "The todo is deleted!";
+      todos.length > 1
+        ? "All todos have been deleted!"
+        : "The todo has been deleted!";
     setAlertText(res);
     setAlert(true);
     setAlertColor(true);
     setInputVal("");
   };
+
   return (
     <div className="p-5 md:p-0 md:max-w-[900px] m-auto relative text-center montserrat">
       <h1 className="mb-5 font-bold text-4xl md:text-5xl">Todo List APP</h1>
       {exist && (
-        <span className="text-xs text-red-700">Todo Already Exist</span>
+        <span className="text-xs text-red-700">Todo already exists</span>
       )}
       {alert && (
         <p className={alertColor ? "text-green-500" : "text-red-500"}>
@@ -178,11 +170,10 @@ export default function Todo() {
             ref={inputRef}
             type="text"
             className="border border-slate rounded bg-slate-50 p-2 flex-1"
-            placeholder="add todo"
+            placeholder="Add todo"
             onChange={handleChange}
             value={inputVal}
           />
-
           <button
             className="bg-blue-600 text-white p-2 rounded hover:bg-blue-500 flex items-center justify-center gap-2"
             type="submit"
@@ -217,6 +208,7 @@ export default function Todo() {
           </button>
         </>
       )}
+
       {confirm && (
         <div className="fixed left-0 top-0 right-0 bottom-0 flex items-center flex-col justify-center bg-[rgba(0,0,0,0.4)]">
           <div className="bg-white rounded p-5 text-center">
@@ -226,8 +218,8 @@ export default function Todo() {
             />
             <h1 className="font-bold text-4xl mb-5">
               {todos.length > 1
-                ? "Are you sure to delete all these todos"
-                : "Are you sure to delete this todo ?"}
+                ? "Are you sure to delete all these todos?"
+                : "Are you sure to delete this todo?"}
             </h1>
             <div className="flex items-center gap-3 w-full justify-center">
               <button
@@ -235,14 +227,14 @@ export default function Todo() {
                 onClick={handleYes}
               >
                 {todos.length > 1
-                  ? "Are you sure to delete all these Todos"
-                  : "Are you sure to delete this Todo"}
+                  ? "Yes, delete all these Todos"
+                  : "Yes, delete this Todo"}
               </button>
               <button
                 className="text-white p-2 rounded bg-red-600"
                 onClick={() => setConfirm(false)}
               >
-                cancel
+                Cancel
               </button>
             </div>
           </div>
@@ -252,19 +244,22 @@ export default function Todo() {
       {deleteTodo.isShow && (
         <div className="fixed left-0 top-0 right-0 bottom-0 flex items-center flex-col justify-center bg-[rgba(0,0,0,0.4)]">
           <div className="bg-white rounded p-5 text-center">
+            <FontAwesomeIcon
+              icon={faExclamation}
+              className="text-5xl text-red-500 rounded-full p-5 border-2 border-red-500 w-[100px] h-[100px] mb-5"
+            />
             <h1 className="font-bold text-4xl mb-5">
-              Are you sure to delete this <span>"{deleteTodo.name}"</span> ?
+              Are you sure to delete this <span>"{deleteTodo.name}"</span>?
             </h1>
             <div className="flex items-center gap-3 w-full justify-center">
               <button
                 className="text-white p-2 rounded bg-blue-600"
                 onClick={handleConfirm}
               >
-                Yes delete
+                Yes, delete
               </button>
               <button
                 className="text-white p-2 rounded bg-red-600"
-                // onClick={() => setDeleteTodo({ isShow: false })}
                 onClick={() =>
                   setDeleteTodo((prevState) => ({
                     ...prevState,
@@ -272,7 +267,7 @@ export default function Todo() {
                   }))
                 }
               >
-                cancel
+                Cancel
               </button>
             </div>
           </div>
@@ -296,7 +291,7 @@ export default function Todo() {
                 className="bg-gray-500 text-white p-2 rounded flex items-center justify-center gap-2"
                 onClick={handleCancel}
               >
-                <FontAwesomeIcon icon={faXmarkCircle} />
+                <FontAwesomeIcon icon={faTimesCircle} />
                 Cancel
               </button>
               <button
