@@ -78,7 +78,7 @@ export default function Todo() {
     setDeleteTodo({ index: index, isShow: true, name: todoName });
   };
 
-  const handleConfirm = () => {
+  const handleDeleteConfirm = () => {
     if (deleteTodo.isShow) {
       const deleteTodos = todos.filter((_, idx) => idx !== deleteTodo.index);
       setTodos(deleteTodos);
@@ -137,7 +137,7 @@ export default function Todo() {
     setConfirm(true);
   };
 
-  const handleYes = () => {
+  const handleSuccess = () => {
     setTodos([]);
     setConfirm(false);
     const res =
@@ -224,7 +224,7 @@ export default function Todo() {
             <div className="flex items-center gap-3 w-full justify-center">
               <button
                 className="text-white p-2 rounded bg-blue-600"
-                onClick={handleYes}
+                onClick={handleSuccess}
               >
                 {todos.length > 1
                   ? "Yes, delete all these Todos"
@@ -254,7 +254,7 @@ export default function Todo() {
             <div className="flex items-center gap-3 w-full justify-center">
               <button
                 className="text-white p-2 rounded bg-blue-600"
-                onClick={handleConfirm}
+                onClick={handleDeleteConfirm}
               >
                 Yes, delete
               </button>
