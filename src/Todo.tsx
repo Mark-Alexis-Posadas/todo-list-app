@@ -165,7 +165,7 @@ export default function Todo() {
         onSubmit={handleAddTodo}
         className="flex items-center justify-center gap-3 mb-5"
       >
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-3 w-full">
+        <div className="flex items-center gap-3 w-full">
           <input
             ref={inputRef}
             type="text"
@@ -175,11 +175,11 @@ export default function Todo() {
             value={inputVal}
           />
           <button
-            className="bg-blue-600 text-white p-2 rounded hover:bg-blue-500 flex items-center justify-center gap-2"
+            className="bg-blue-600 text-white p-3 md:p-2 rounded hover:bg-blue-500 flex items-center justify-center gap-2"
             type="submit"
           >
             <FontAwesomeIcon icon={faPlusCircle} />
-            Add Todo
+            <span className="hidden md:block">Add Todo</span>
           </button>
         </div>
       </form>
