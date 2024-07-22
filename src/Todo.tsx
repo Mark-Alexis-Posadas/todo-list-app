@@ -13,8 +13,13 @@ export default function Todo() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [todos, setTodos] = useState<string[]>(() => {
     const savedTodos = localStorage.getItem("todos");
-    return savedTodos ? JSON.parse(savedTodos) : [];
+    try {
+      return savedTodos ? JSON.parse(savedTodos) : [];
+    } catch (error) {
+      return [];
+    }
   });
+
   const [inputVal, setInputVal] = useState<string>("");
   const [modalEdit, setModalEdit] = useState<boolean>(false);
   const [confirm, setConfirm] = useState<boolean>(false);
@@ -125,7 +130,7 @@ export default function Todo() {
       setTodos(updatedTodos);
 
       setAlert(true);
-      setAlertText("Todo has been updated");
+      setAlertText(`${todos} has been updated to "${currentTodo.text}"`);
       setAlertColor(true);
     }
 
