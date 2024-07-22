@@ -14,12 +14,9 @@ export default function Todo() {
   const [todos, setTodos] = useState<string[]>(() => {
     const savedTodos = localStorage.getItem("todos");
     try {
-      // Check if savedTodos is defined and parseable JSON
       return savedTodos ? JSON.parse(savedTodos) : [];
     } catch (error) {
-      // Handle JSON parsing error (e.g., savedTodos is not valid JSON)
-      console.error("Error parsing todos from localStorage:", error);
-      return []; // Default to empty array if parsing fails
+      return [];
     }
   });
 
