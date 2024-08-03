@@ -130,7 +130,13 @@ export default function Todo() {
       setTodos(updatedTodos);
 
       setAlert(true);
-      setAlertText(`${todos} has been updated to "${currentTodo.text}"`);
+
+      setAlertText(
+        `Todo "${todos[currentTodo.index]}" has been updated to "${
+          currentTodo.text
+        }"`
+      );
+
       setAlertColor(true);
     }
 
