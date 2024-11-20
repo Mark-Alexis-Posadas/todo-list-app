@@ -267,7 +267,7 @@ export default function Todo() {
                 className="text-white p-2 rounded bg-blue-600"
                 onClick={handleDeleteConfirm}
               >
-                Yes, delete
+                Proceed
               </button>
               <button
                 className="text-white p-2 rounded bg-red-600"
