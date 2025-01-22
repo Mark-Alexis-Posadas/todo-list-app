@@ -52,7 +52,8 @@ export const TodoForm: FC<TodoFormType> = ({
       return;
     }
 
-    setTodos([...todos, inputVal]);
+    const newTodo: TodoType = { text: inputVal, completed: false };
+    setTodos([...todos, newTodo]);
     setInputVal("");
   };
 

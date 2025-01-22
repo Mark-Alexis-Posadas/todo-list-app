@@ -45,6 +45,13 @@ export const TodoList: FC<TodoListType> = ({
     text: "",
   });
 
+  const handleToggleCompleted = (index: number) => {
+    const updatedTodos = todos.map((todo, idx) =>
+      idx === index ? { ...todo, completed: !todo.completed } : todo
+    );
+    setTodos(updatedTodos);
+  };
+
   const handleDelete = (index: number, todoName: string) => {
     setDeleteTodo({ index: index, isShow: true, name: todoName });
   };
@@ -142,6 +149,7 @@ export const TodoList: FC<TodoListType> = ({
                 handleDelete={() => handleDelete(index, item)}
                 handleEdit={handleEdit}
                 isEditing={currentTodo.index === index}
+                handleToggleCompleted={handleToggleCompleted}
               />
             ))}
           </ul>

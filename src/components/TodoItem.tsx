@@ -7,6 +7,7 @@ export default function TodoItem({
   handleEdit,
   handleDelete,
   isEditing,
+  handleToggleCompleted,
 }: TodoItemType) {
   return (
     <li
@@ -17,7 +18,13 @@ export default function TodoItem({
           : "border-slate-70"
       } rounded p-2 flex items-start md:items-center justify-between flex-col md:flex-row bg-white my-2`}
     >
-      {item}
+      <span
+        onClick={() => handleToggleCompleted(index)}
+        className={`cursor-pointer ${item.completed ? "line-through" : ""}`}
+      >
+        {item.text}
+      </span>
+
       <div className="flex items-center gap-3 mt-5 md:mt-0">
         <button
           className="bg-blue-600 text-white rounded p-2 flex items-center justify-center gap-2"

@@ -4,14 +4,18 @@ import { Header } from "./components/Header";
 import { TodoList } from "./TodoList";
 
 const App: React.FC = () => {
-  const [todos, setTodos] = useState<string[]>(() => {
+  const [todos, setTodos] = useState<TodoType[]>(() => {
     const savedTodos = localStorage.getItem("todos");
     try {
-      return savedTodos ? JSON.parse(savedTodos) : [];
+      return savedTodos
+        ? JSON.parse(savedTodos)
+        : [{ text: "Sample Todo", completed: false }];
     } catch (error) {
-      return [];
+      return [{ text: "Sample Todo", completed: false }];
     }
   });
+
+  console.log(todos);
 
   const [inputVal, setInputVal] = useState<string>("");
 
