@@ -6,12 +6,12 @@ import {
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import TodoItem from "./components/TodoItem";
-import { TodoType } from "./types/Todo";
+import { TodoType, CurrentTodoType } from "./types/Todo";
 
 interface TodoListType {
   setInputVal: (value: string) => void;
-  todos: string[];
-  setTodos: (todos: string[]) => void;
+  todos: TodoType[];
+  setTodos: (todos: TodoType[]) => void;
   setAlert: (alert: boolean) => void;
   setAlertText: (text: string) => void;
   setAlertColor: (color: boolean) => void;
@@ -40,7 +40,7 @@ export const TodoList: FC<TodoListType> = ({
     name: "",
   });
 
-  const [currentTodo, setCurrentTodo] = useState<TodoType>({
+  const [currentTodo, setCurrentTodo] = useState<CurrentTodoType>({
     index: null,
     text: "",
   });
@@ -77,7 +77,7 @@ export const TodoList: FC<TodoListType> = ({
   };
 
   const handleEdit = (index: number) => {
-    setCurrentTodo({ index, text: todos[index] });
+    setCurrentTodo({ index, text: todos[index].text });
     setModalEdit(true);
   };
 
@@ -146,7 +146,7 @@ export const TodoList: FC<TodoListType> = ({
                 key={index}
                 item={item}
                 index={index}
-                handleDelete={() => handleDelete(index, item)}
+                handleDelete={() => handleDelete(index, item.text)}
                 handleEdit={handleEdit}
                 isEditing={currentTodo.index === index}
                 handleToggleCompleted={handleToggleCompleted}

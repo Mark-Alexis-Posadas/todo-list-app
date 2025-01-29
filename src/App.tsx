@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { TodoForm } from "./components/TodoForm";
 import { Header } from "./components/Header";
 import { TodoList } from "./TodoList";
-
+import { TodoType } from "./types/Todo";
 const App: React.FC = () => {
   const [todos, setTodos] = useState<TodoType[]>(() => {
     const savedTodos = localStorage.getItem("todos");

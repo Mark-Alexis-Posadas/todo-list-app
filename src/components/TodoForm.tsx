@@ -1,12 +1,13 @@
 import { ChangeEvent, useRef, FC } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { TodoType } from "../types/Todo";
 
 interface TodoFormType {
   inputVal: string;
   setInputVal: (value: string) => void;
-  todos: string[];
-  setTodos: (todos: string[]) => void;
+  todos: TodoType[];
+  setTodos: (todos: TodoType[]) => void;
   alert: boolean;
   setAlert: (alert: boolean) => void;
   alertText: string;
@@ -34,7 +35,9 @@ export const TodoForm: FC<TodoFormType> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    todos.includes(e.target.value) ? setExists(true) : setExists(false);
+    todos.some((todo) => todo.text === e.target.value)
+      ? setExists(true)
+      : setExists(false);
     setInputVal(e.target.value);
   };
 
@@ -52,7 +55,7 @@ export const TodoForm: FC<TodoFormType> = ({
       return;
     }
 
-    const newTodo: TodoType = { text: inputVal, completed: false };
+    const newTodo: TodoType = { text: inputVal, completed: false }; // Changed the type of 'newTodo'
     setTodos([...todos, newTodo]);
     setInputVal("");
   };
