@@ -87,6 +87,7 @@ export const TodoList: FC<TodoListType> = ({
   };
 
   const handleUpdate = () => {
+    console.log(currentTodo.text);
     if (currentTodo.text.trim() === "") {
       setAlertText("Please enter a valid todo");
       setAlert(true);
@@ -95,17 +96,18 @@ export const TodoList: FC<TodoListType> = ({
 
     if (
       currentTodo.index !== null &&
-      currentTodo.text !== todos[currentTodo.index]
+      currentTodo.text !== todos[currentTodo.index].text
     ) {
-      const updatedTodos: string[] = todos.map((todo, idx) =>
-        idx === currentTodo.index ? currentTodo.text : todo
+      const updatedTodos = todos.map((todo, idx) =>
+        idx === currentTodo.index ? { ...todo, text: currentTodo.text } : todo
       );
+
       setTodos(updatedTodos);
 
       setAlert(true);
 
       setAlertText(
-        `Todo "${todos[currentTodo.index]}" has been updated to "${
+        `Todo "${todos[currentTodo.index].text}" has been updated to "${
           currentTodo.text
         }"`
       );

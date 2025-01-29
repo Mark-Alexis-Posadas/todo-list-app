@@ -15,8 +15,6 @@ const App: React.FC = () => {
     }
   });
 
-  console.log(todos);
-
   const [inputVal, setInputVal] = useState<string>("");
 
   const [alert, setAlert] = useState<boolean>(false);
