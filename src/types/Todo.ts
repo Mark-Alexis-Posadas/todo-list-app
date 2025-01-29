@@ -5,5 +5,5 @@ export interface TodoType {
 
 export interface CurrentTodoType {
   index: number | null;
-  text: string | number;
+  text: string;
 }
