@@ -87,7 +87,6 @@ export const TodoList: FC<TodoListType> = ({
   };
 
   const handleUpdate = () => {
-    console.log(currentTodo.text);
     if (currentTodo.text.trim() === "") {
       setAlertText("Please enter a valid todo");
       setAlert(true);

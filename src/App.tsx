@@ -61,6 +61,11 @@ const App: React.FC = () => {
         setAlertColor={setAlertColor}
         setExists={setExists}
       />
+
+      <div className="flex items-center justify-center gap-4 w-full">
+        <button className="text-red-500">Delete done tasks</button>
+        <button className="text-red-500">Delete all tasks</button>
+      </div>
     </div>
   );
 };
