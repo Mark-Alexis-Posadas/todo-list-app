@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.neon-green {
+  text-shadow:
+    0 0 5px #00ff88,
+    0 0 10px #00ff88,
+    0 0 20px #00ff88;
+}
+
+.neon-box {
+  box-shadow:
+    0 0 10px #00ff88,
+    0 0 20px rgba(0, 255, 136, 0.3);
+}

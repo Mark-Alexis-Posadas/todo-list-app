@@ -16,6 +16,10 @@ interface TodoListType {
   setAlertText: (text: string) => void;
   setAlertColor: (color: boolean) => void;
   setExists: (exists: boolean) => void;
+  xp: number;
+  setXp: React.Dispatch<React.SetStateAction<number>>;
+  streak: number;
+  setStreak: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const TodoList: FC<TodoListType> = ({
@@ -26,9 +30,11 @@ export const TodoList: FC<TodoListType> = ({
   setAlertText,
   setAlertColor,
   setExists,
+  setXp,
+  setStreak,
 }) => {
-  const [modalEdit, setModalEdit] = useState<boolean>(false);
-  const [confirm, setConfirm] = useState<boolean>(false);
+  const [modalEdit, setModalEdit] = useState(false);
+  const [confirm, setConfirm] = useState(false);
 
   const [deleteTodo, setDeleteTodo] = useState<{
     index: null | number;
@@ -45,33 +51,37 @@ export const TodoList: FC<TodoListType> = ({
     text: "",
   });
 
+  const completedCount = todos.filter((t) => t.completed).length;
+  const activeCount = todos.length - completedCount;
+
   const handleToggleCompleted = (index: number) => {
-    const updatedTodos = todos.map((todo, idx) =>
-      idx === index ? { ...todo, completed: !todo.completed } : todo
-    );
+    const updatedTodos = [...todos];
+    updatedTodos[index].completed = !updatedTodos[index].completed;
+
+    // 🎯 XP logic
+    if (updatedTodos[index].completed) {
+      setXp((prev) => prev + 10);
+      setStreak((prev) => prev + 1);
+    } else {
+      setStreak(0);
+    }
+
     setTodos(updatedTodos);
   };
 
   const handleDelete = (index: number, todoName: string) => {
-    setDeleteTodo({ index: index, isShow: true, name: todoName });
+    setDeleteTodo({ index, isShow: true, name: todoName });
   };
 
   const handleDeleteConfirm = () => {
-    if (deleteTodo.isShow) {
-      const deleteTodos = todos.filter((_, idx) => idx !== deleteTodo.index);
-      setTodos(deleteTodos);
-      setInputVal("");
+    if (deleteTodo.index !== null) {
+      const updated = todos.filter((_, idx) => idx !== deleteTodo.index);
+      setTodos(updated);
+      setDeleteTodo({ index: null, isShow: false, name: "" });
 
-      setDeleteTodo((prevState) => ({
-        ...prevState,
-        isShow: false,
-      }));
       setAlert(true);
-      setAlertText(`${deleteTodo.name} has been deleted`);
+      setAlertText(`🔥 Mission "${deleteTodo.name}" deleted`);
       setAlertColor(true);
-    }
-
-    if (todos) {
       setExists(false);
     }
   };
@@ -81,38 +91,27 @@ export const TodoList: FC<TodoListType> = ({
     setModalEdit(true);
   };
 
-  const handleCancel = () => {
-    setModalEdit(false);
-    setCurrentTodo({ index: null, text: "" });
-  };
-
   const handleUpdate = () => {
-    if (currentTodo.text.trim() === "") {
-      setAlertText("Please enter a valid todo");
+    if (currentTodo.index === null) return;
+
+    if (!currentTodo.text.trim()) {
+      setAlertText("⚠ Mission name required");
       setAlert(true);
+      setAlertColor(false);
       return;
     }
 
-    if (
-      currentTodo.index !== null &&
-      currentTodo.text !== todos[currentTodo.index].text
-    ) {
-      const updatedTodos = todos.map((todo, idx) =>
-        idx === currentTodo.index ? { ...todo, text: currentTodo.text } : todo
-      );
+    const updatedTodos = todos.map((todo, idx) =>
+      idx === currentTodo.index
+        ? { ...todo, text: currentTodo.text.trim() }
+        : todo,
+    );
 
-      setTodos(updatedTodos);
+    setTodos(updatedTodos);
 
-      setAlert(true);
-
-      setAlertText(
-        `Todo "${todos[currentTodo.index].text}" has been updated to "${
-          currentTodo.text
-        }"`
-      );
-
-      setAlertColor(true);
-    }
+    setAlert(true);
+    setAlertText("✅ Mission updated successfully");
+    setAlertColor(true);
 
     setModalEdit(false);
     setCurrentTodo({ index: null, text: "" });
@@ -125,20 +124,31 @@ export const TodoList: FC<TodoListType> = ({
   const handleSuccess = () => {
     setTodos([]);
     setConfirm(false);
-    const res =
-      todos.length > 1
-        ? "All todos have been deleted!"
-        : "The todo has been deleted!";
-    setAlertText(res);
+
     setAlert(true);
+    setAlertText("💀 All missions terminated");
     setAlertColor(true);
+
     setInputVal("");
+    setExists(false);
   };
 
   return (
-    <div className="p-5 md:p-0 relative montserrat">
-      {todos.length <= 0 ? (
-        "No todos left"
+    <div className="w-full max-w-[700px] mt-6">
+      {/* STATS PANEL */}
+      {todos.length > 0 && (
+        <div className="flex justify-between mb-6 text-green-400 text-sm">
+          <p>📌 Total: {todos.length}</p>
+          <p>✅ Completed: {completedCount}</p>
+          <p>🔥 Active: {activeCount}</p>
+        </div>
+      )}
+
+      {/* TODO LIST */}
+      {todos.length === 0 ? (
+        <p className="text-center text-green-600 opacity-60">
+          No active missions...
+        </p>
       ) : (
         <>
           <ul>
@@ -154,38 +164,41 @@ export const TodoList: FC<TodoListType> = ({
               />
             ))}
           </ul>
+
           <button
-            className="text-center text-white bg-blue-600 p-2 rounded mt-2"
+            className="mt-4 w-full border border-red-500 text-red-400 
+                       hover:bg-red-500 hover:text-black 
+                       transition-all duration-200 p-2 rounded"
             onClick={handleClearAll}
           >
-            {todos.length > 1 ? "Clear All Todos" : "Clear Todo"}
+            Clear All Missions
           </button>
         </>
       )}
 
+      {/* CONFIRM ALL MODAL */}
       {confirm && (
-        <div className="fixed left-0 top-0 right-0 bottom-0 flex items-center flex-col justify-center bg-[rgba(0,0,0,0.4)]">
-          <div className="bg-white rounded p-5 text-center">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/70">
+          <div className="bg-[#111] border border-red-500 p-8 rounded text-center shadow-[0_0_20px_red]">
             <FontAwesomeIcon
               icon={faExclamation}
-              className="text-5xl text-red-500 rounded-full p-5 border-2 border-red-500 w-[100px] h-[100px] mb-5"
+              className="text-5xl text-red-500 mb-4"
             />
-            <h1 className="font-bold text-4xl mb-5">
-              {todos.length > 1
-                ? "Are you sure to delete all these todos?"
-                : "Are you sure to delete this todo?"}
-            </h1>
-            <div className="flex items-center gap-3 w-full justify-center">
+            <h2 className="text-xl text-red-400 mb-6">
+              Terminate all missions?
+            </h2>
+
+            <div className="flex gap-4 justify-center">
               <button
-                className="text-white p-2 rounded bg-blue-600"
+                className="px-4 py-2 border border-green-500 text-green-400 
+                           hover:bg-green-500 hover:text-black rounded transition"
                 onClick={handleSuccess}
               >
-                {todos.length > 1
-                  ? "Yes, delete all these Todos"
-                  : "Yes, delete this Todo"}
+                Confirm
               </button>
               <button
-                className="text-white p-2 rounded bg-red-600"
+                className="px-4 py-2 border border-red-500 text-red-400 
+                           hover:bg-red-500 hover:text-black rounded transition"
                 onClick={() => setConfirm(false)}
               >
                 Cancel
@@ -195,30 +208,31 @@ export const TodoList: FC<TodoListType> = ({
         </div>
       )}
 
+      {/* DELETE SINGLE MODAL */}
       {deleteTodo.isShow && (
-        <div className="fixed left-0 top-0 right-0 bottom-0 flex items-center flex-col justify-center bg-[rgba(0,0,0,0.4)]">
-          <div className="bg-white rounded p-5 text-center">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/70">
+          <div className="bg-[#111] border border-red-500 p-8 rounded text-center shadow-[0_0_20px_red]">
             <FontAwesomeIcon
               icon={faExclamation}
-              className="text-5xl text-red-500 rounded-full p-5 border-2 border-red-500 w-[100px] h-[100px] mb-5"
+              className="text-5xl text-red-500 mb-4"
             />
-            <h1 className="font-bold text-4xl mb-5">
-              Are you sure to delete this <span>"{deleteTodo.name}"</span>?
-            </h1>
-            <div className="flex items-center gap-3 w-full justify-center">
+            <h2 className="text-lg text-red-400 mb-6">
+              Delete mission "{deleteTodo.name}"?
+            </h2>
+
+            <div className="flex gap-4 justify-center">
               <button
-                className="text-white p-2 rounded bg-blue-600"
+                className="px-4 py-2 border border-green-500 text-green-400 
+                           hover:bg-green-500 hover:text-black rounded transition"
                 onClick={handleDeleteConfirm}
               >
                 Proceed
               </button>
               <button
-                className="text-white p-2 rounded bg-red-600"
+                className="px-4 py-2 border border-red-500 text-red-400 
+                           hover:bg-red-500 hover:text-black rounded transition"
                 onClick={() =>
-                  setDeleteTodo((prevState) => ({
-                    ...prevState,
-                    isShow: false,
-                  }))
+                  setDeleteTodo({ index: null, isShow: false, name: "" })
                 }
               >
                 Cancel
@@ -228,32 +242,37 @@ export const TodoList: FC<TodoListType> = ({
         </div>
       )}
 
+      {/* EDIT MODAL */}
       {modalEdit && (
-        <div className="fixed left-0 top-0 right-0 bottom-0 flex items-center justify-center bg-[rgba(0,0,0,0.4)]">
-          <div className="flex items-center justify-center w-[500px]">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/70">
+          <div className="bg-[#111] border border-green-500 p-6 rounded shadow-[0_0_20px_#00ff88] w-[400px]">
             <input
               type="text"
-              className="bg-slate-100 rounded p-2 text-black w-full"
-              placeholder="Edit Todo..."
+              className="w-full bg-black border border-green-500 
+                         text-green-400 p-2 rounded mb-4 focus:outline-none"
+              value={currentTodo.text}
               onChange={(e) =>
                 setCurrentTodo({ ...currentTodo, text: e.target.value })
               }
-              value={currentTodo.text}
             />
-            <div className="flex items-center gap-1 ml-3">
+
+            <div className="flex justify-between">
               <button
-                className="bg-gray-500 text-white p-2 rounded flex items-center justify-center gap-2"
-                onClick={handleCancel}
+                className="border border-gray-500 text-gray-400 
+                           hover:bg-gray-500 hover:text-black 
+                           px-3 py-2 rounded transition"
+                onClick={() => setModalEdit(false)}
               >
-                <FontAwesomeIcon icon={faTimesCircle} />
-                Cancel
+                <FontAwesomeIcon icon={faTimesCircle} /> Cancel
               </button>
+
               <button
-                className="bg-blue-600 rounded p-2 text-white flex items-center justify-center gap-2"
+                className="border border-green-500 text-green-400 
+                           hover:bg-green-500 hover:text-black 
+                           px-3 py-2 rounded transition"
                 onClick={handleUpdate}
               >
-                <FontAwesomeIcon icon={faCheckCircle} />
-                Update
+                <FontAwesomeIcon icon={faCheckCircle} /> Update
               </button>
             </div>
           </div>

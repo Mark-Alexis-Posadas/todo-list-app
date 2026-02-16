@@ -1,3 +1,7 @@
 export const Header = () => {
-  return <h1 className="mb-5 font-bold text-4xl md:text-5xl">Todo List APP</h1>;
+  return (
+    <h1 className="text-5xl mb-8 neon-green tracking-widest">
+      🎮 MISSION CONTROL
+    </h1>
+  );
 };

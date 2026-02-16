@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, FC } from "react";
+import { ChangeEvent, useRef, FC, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { TodoType } from "../types/Todo";
@@ -34,17 +34,28 @@ export const TodoForm: FC<TodoFormType> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">(
+    "easy",
+  );
+
+  // ✅ Improved duplicate check (case insensitive + trimmed)
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    todos.some((todo) => todo.text === e.target.value)
-      ? setExists(true)
-      : setExists(false);
-    setInputVal(e.target.value);
+    const value = e.target.value;
+    const normalized = value.trim().toLowerCase();
+
+    const isDuplicate = todos.some(
+      (todo) => todo.text.trim().toLowerCase() === normalized,
+    );
+
+    setExists(isDuplicate);
+    setInputVal(value);
   };
 
   const handleAddTodo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (inputVal.trim() === "") {
-      setAlertText("Please add a todo...");
+      setAlertText("⚠ Mission name required...");
       setAlert(true);
       setAlertColor(false);
       inputRef.current?.focus();
@@ -52,46 +63,87 @@ export const TodoForm: FC<TodoFormType> = ({
     }
 
     if (exists) {
+      setAlertText("⚠ Mission already exists!");
+      setAlert(true);
+      setAlertColor(false);
       return;
     }
 
-    const newTodo: TodoType = { text: inputVal, completed: false };
+    const newTodo: TodoType = {
+      text: inputVal.trim(),
+      completed: false,
+      difficulty, // ✅ new feature
+    };
+
     setTodos([...todos, newTodo]);
+
     setInputVal("");
+    setDifficulty("easy");
+
+    setAlertText("✅ Mission added successfully!");
+    setAlert(true);
+    setAlertColor(true);
   };
 
   return (
-    <>
+    <div className="w-full max-w-[600px] mb-8">
+      {/* ALERT */}
       {exists && (
-        <span className="text-xs text-red-700">Todo already exists</span>
+        <span className="text-xs text-red-500 block mb-2">
+          ⚠ Mission already exists
+        </span>
       )}
+
       {alert && (
-        <p className={alertColor ? "text-green-500" : "text-red-500"}>
+        <p
+          className={`text-sm mb-3 ${
+            alertColor ? "text-green-400" : "text-red-400"
+          }`}
+        >
           {alertText}
         </p>
       )}
+
+      {/* FORM */}
       <form
         onSubmit={handleAddTodo}
-        className="flex items-center justify-center gap-3 mb-5"
+        className="flex flex-col md:flex-row items-center gap-3"
       >
-        <div className="flex items-center gap-3 w-full">
-          <input
-            ref={inputRef}
-            type="text"
-            className="border border-slate rounded bg-slate-50 p-2 flex-1"
-            placeholder="Add todo"
-            onChange={handleChange}
-            value={inputVal}
-          />
-          <button
-            className="bg-blue-600 text-white p-3 md:p-2 rounded hover:bg-blue-500 flex items-center justify-center gap-2"
-            type="submit"
-          >
-            <FontAwesomeIcon icon={faPlusCircle} />
-            <span className="hidden md:block">Add Todo</span>
-          </button>
-        </div>
+        <input
+          ref={inputRef}
+          type="text"
+          className="flex-1 bg-black border border-green-500 text-green-400 
+                     p-3 rounded focus:outline-none focus:ring-2 
+                     focus:ring-green-400 transition-all"
+          placeholder="Enter new mission..."
+          onChange={handleChange}
+          value={inputVal}
+        />
+
+        {/* Difficulty Selector */}
+        <select
+          value={difficulty}
+          onChange={(e) =>
+            setDifficulty(e.target.value as "easy" | "medium" | "hard")
+          }
+          className="bg-black border border-green-500 text-green-400 
+                     p-3 rounded focus:outline-none"
+        >
+          <option value="easy">Easy (+5 XP)</option>
+          <option value="medium">Medium (+10 XP)</option>
+          <option value="hard">Hard (+20 XP)</option>
+        </select>
+
+        <button
+          className="bg-green-500 text-black px-4 py-3 rounded 
+                     hover:bg-green-400 hover:scale-105 
+                     transition-all duration-200 flex items-center gap-2"
+          type="submit"
+        >
+          <FontAwesomeIcon icon={faPlusCircle} />
+          <span className="hidden md:block">Deploy</span>
+        </button>
       </form>
-    </>
+    </div>
   );
 };
